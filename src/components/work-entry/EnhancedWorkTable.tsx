@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useWorkEntries, useDeleteWorkEntry, useUpdateWorkEntry, type WorkEntry } from "@/hooks/useWorkEntries";
 import { useColleges } from "@/hooks/useColleges";
-import { exportToExcel } from "@/utils/excelExport";
+import { exportToExcel, exportCustomWorkEntries } from "@/utils/excelExport";
 import { WorkEntryEditForm } from "./WorkEntryEditForm";
 
 // Default rate mapping for consistency with other forms
@@ -110,8 +110,8 @@ export const EnhancedWorkTable = () => {
           entry.location,
           entry.colleges?.name,
           entry.work_type,
-          (entry as any).blocks,
-          // Removed floor
+          (entry as any).block,
+          (entry as any).floor,
           (entry as any).work_area_or_room,
           (entry as any).quantity,
         ].filter(Boolean).join(" ").toLowerCase();
@@ -198,16 +198,15 @@ export const EnhancedWorkTable = () => {
         "S.No": index + 1,
         Date: entry.date ? new Date(entry.date).toLocaleDateString() : "N/A",
         College: (entry as any).colleges?.name || "N/A",
+        Blocks: (entry as any).block || "",
+        Floor: (entry as any).floor || "",
         Location: entry.location || "N/A",
-        Blocks: (entry as any).blocks || "",
-        // Removed Floor
-        "Work Area/Room": (entry as any).work_area_or_room || "",
         "Work Description": entry.work_description || "N/A",
         "Work Type": entry.work_type || "N/A",
         "Length (ft)": n(entry.length),
         "Width (ft)": n(entry.width),
         "Height (ft)": n(entry.height),
-        Quantity: n(entry.height),
+        Quantity: n((entry as any).quantity) || 1,
         "Sq.Ft (Volume)": sq,
         "Rate per Unit": rate,
         "Final Rate": final,
@@ -215,7 +214,7 @@ export const EnhancedWorkTable = () => {
       };
     });
 
-    exportToExcel(rows as any[]);
+    exportCustomWorkEntries(rows, 'work-entries.xlsx');
   };
 
   const clearFilters = () => {
@@ -469,11 +468,13 @@ export const EnhancedWorkTable = () => {
                     <TableCell>
                       <div className="text-sm">
                         <div>{entry.location || "N/A"}</div>
-                        {(entry as any).blocks || (entry as any).work_area_or_room ? (
+                        {((entry as any).block || (entry as any).floor || (entry as any).work_area_or_room) ? (
                           <div className="text-muted-foreground text-xs">
-                            {[(entry as any).blocks, (entry as any).work_area_or_room]
-                              .filter(Boolean)
-                              .join(", ")}
+                            {[
+                              (entry as any).block ? `Block: ${(entry as any).block}` : "",
+                              (entry as any).floor ? `Floor: ${(entry as any).floor}` : "",
+                              (entry as any).work_area_or_room || ""
+                            ].filter(Boolean).join(", ")}
                           </div>
                         ) : null}
                       </div>

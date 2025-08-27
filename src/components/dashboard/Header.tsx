@@ -94,7 +94,7 @@ export const Header = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`text-primary-foreground hover:bg-white/10 ${
+                  className={`text-primary-foreground hover:bg-white/10 navbar-btn-hover focus-ring ${
                     location.pathname === item.href ? 'bg-white/10' : ''
                   }`}
                 >
@@ -107,7 +107,7 @@ export const Header = () => {
             <Link to="/new-work-entry">
               <Button
                 size="sm"
-                className="bg-white/10 text-primary-foreground hover:bg-white/20 border-white/20 ml-2"
+                className="bg-white/10 text-primary-foreground hover:bg-white/20 border-white/20 ml-2 btn-hover-lift focus-ring"
                 variant="outline"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -162,7 +162,7 @@ export const Header = () => {
             <Link to="/new-work-entry">
               <Button
                 size="sm"
-                className="bg-white/10 text-primary-foreground hover:bg-white/20 border-white/20 mr-2"
+                className="bg-white/10 text-primary-foreground hover:bg-white/20 border-white/20 mr-2 btn-hover-lift focus-ring"
                 variant="outline"
               >
                 <Plus className="h-4 w-4" />
@@ -172,7 +172,7 @@ export const Header = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="text-primary-foreground hover:bg-white/10"
+              className="text-primary-foreground hover:bg-white/10 btn-hover-scale focus-ring"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -188,7 +188,7 @@ export const Header = () => {
                 <Link
                   key={item.href}
                   to={item.href}
-                  className={`flex items-center px-4 py-2 rounded-md ${
+                  className={`flex items-center px-4 py-2 rounded-md navbar-btn-hover ${
                     location.pathname === item.href
                       ? 'bg-white/10 text-white'
                       : 'text-primary-foreground hover:bg-white/10'
@@ -215,7 +215,7 @@ export const Header = () => {
                   </div>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start text-primary-foreground hover:bg-white/10 mt-2"
+                    className="w-full justify-start text-primary-foreground hover:bg-white/10 mt-2 btn-hover-lift focus-ring"
                     onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4 mr-3" />

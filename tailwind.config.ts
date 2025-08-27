@@ -12,7 +12,14 @@ export default {
 	theme: {
 		container: {
 			center: true,
-			padding: '2rem',
+			padding: {
+				DEFAULT: '1rem',
+				sm: '1.5rem',
+				md: '2rem',
+				lg: '2rem',
+				xl: '2rem',
+				'2xl': '2rem'
+			},
 			screens: {
 				'2xl': '1400px'
 			}
@@ -72,11 +79,6 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				}
 			},
-			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
-			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-card': 'var(--gradient-card)',
@@ -118,11 +120,6 @@ export default {
 				sans: ['Inter', 'sans-serif'],
 				heading: ['Inter', 'sans-serif'],
 				body: ['Inter', 'sans-serif']
-			},
-			borderRadius: {
-				xl: 'calc(var(--radius) + 4px)',
-				'2xl': 'calc(var(--radius) + 8px)',
-				'3xl': 'calc(var(--radius) + 12px)'
 			}
 		}
 	},

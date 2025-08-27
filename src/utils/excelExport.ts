@@ -23,19 +23,39 @@ export const exportToExcel = (workEntries: WorkEntry[], filename: string = 'work
 
   // Create a new workbook
   const workbook = XLSX.utils.book_new();
-  
+
   // Convert data to worksheet
   const worksheet = XLSX.utils.json_to_sheet(excelData);
-  
+
   // Auto-size columns
   const colWidths = Object.keys(excelData[0] || {}).map(key => ({
     wch: Math.max(key.length, 15)
   }));
   worksheet['!cols'] = colWidths;
-  
+
   // Add worksheet to workbook
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Work Entries');
-  
+
+  // Generate and download the file
+  XLSX.writeFile(workbook, filename);
+};
+
+export const exportCustomWorkEntries = (customEntries: any[], filename: string = 'work-entries.xlsx') => {
+  // Create a new workbook
+  const workbook = XLSX.utils.book_new();
+
+  // Convert data to worksheet
+  const worksheet = XLSX.utils.json_to_sheet(customEntries);
+
+  // Auto-size columns
+  const colWidths = Object.keys(customEntries[0] || {}).map(key => ({
+    wch: Math.max(key.length, 15)
+  }));
+  worksheet['!cols'] = colWidths;
+
+  // Add worksheet to workbook
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Work Entries');
+
   // Generate and download the file
   XLSX.writeFile(workbook, filename);
 };

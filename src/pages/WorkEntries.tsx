@@ -31,15 +31,15 @@ const WorkEntries = () => {
             <p className="text-muted-foreground">View, edit, and manage all work entries across your colleges</p>
           </div>
           
-          <div className="flex space-x-3">
-            <Link to="/reports">
-              <Button variant="outline">
+          <div className="flex flex-col sm:flex-row gap-3 sm:space-x-3">
+            <Link to="/reports" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto">
                 <BarChart3 className="h-4 w-4 mr-2" />
                 View Reports
               </Button>
             </Link>
-            <Link to="/new-work-entry">
-              <Button className="bg-gradient-primary hover:bg-primary-hover">
+            <Link to="/new-work-entry" className="w-full sm:w-auto">
+              <Button className="bg-gradient-primary hover:bg-primary-hover w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
                 New Entry
               </Button>
@@ -115,18 +115,18 @@ const WorkEntries = () => {
               </div>
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Export All
-              </Button>
-              <Link to="/new-work-entry">
-                <Button size="sm" className="bg-gradient-primary hover:bg-primary-hover">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add New Entry
-                </Button>
-              </Link>
-            </div>
+            <div className="flex flex-col sm:flex-row gap-2 sm:space-x-2">
+               <Button variant="outline" size="sm" className="w-full sm:w-auto btn-hover-lift focus-ring">
+                 <Download className="h-4 w-4 mr-2" />
+                 Export All
+               </Button>
+               <Link to="/new-work-entry" className="w-full sm:w-auto">
+                 <Button size="sm" className="bg-gradient-primary hover:bg-primary-hover w-full sm:w-auto btn-hover-glow focus-ring">
+                   <Plus className="h-4 w-4 mr-2" />
+                   Add New Entry
+                 </Button>
+               </Link>
+             </div>
           </div>
         </Card>
 
@@ -143,26 +143,26 @@ const WorkEntries = () => {
               </p>
             </div>
             
-            <div className="flex flex-wrap gap-3">
-              <Link to="/new-work-entry">
-                <Button variant="outline" size="sm">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create New Entry
-                </Button>
-              </Link>
-              <Link to="/reports">
-                <Button variant="outline" size="sm">
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  View Analytics
-                </Button>
-              </Link>
-              <Link to="/dashboard">
-                <Button variant="outline" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Dashboard
-                </Button>
-              </Link>
-            </div>
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+               <Link to="/new-work-entry" className="w-full sm:w-auto">
+                 <Button variant="outline" size="sm" className="w-full sm:w-auto btn-hover-lift focus-ring">
+                   <Plus className="h-4 w-4 mr-2" />
+                   Create New Entry
+                 </Button>
+               </Link>
+               <Link to="/reports" className="w-full sm:w-auto">
+                 <Button variant="outline" size="sm" className="w-full sm:w-auto btn-hover-scale focus-ring">
+                   <BarChart3 className="h-4 w-4 mr-2" />
+                   View Analytics
+                 </Button>
+               </Link>
+               <Link to="/dashboard" className="w-full sm:w-auto">
+                 <Button variant="outline" size="sm" className="w-full sm:w-auto btn-hover-glow focus-ring">
+                   <ArrowLeft className="h-4 w-4 mr-2" />
+                   Back to Dashboard
+                 </Button>
+               </Link>
+             </div>
           </div>
         </Card>
       </main>
