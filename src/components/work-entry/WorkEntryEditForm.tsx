@@ -19,14 +19,13 @@ import { useUpdateWorkEntry, type WorkEntry, type CreateWorkEntryData } from "@/
 
 // Default auto-rates (₹ per Sq Ft)
 const DEFAULT_RATES: Record<string, number> = {
-  painting: 12,
-  electrical: 20,
-  plumbing: 15,
-  carpentry: 18,
-  masonry: 25,
-  cleaning: 10,
-  maintenance: 14,
-  renovation: 30,
+   newwork: 12,
+  alterwork: 20,
+  complaintwork: 15,
+  rework: 18,
+  fittingwork: 25,
+  pastingwork: 10,
+ 
 };
 
 interface FormData {
@@ -305,15 +304,13 @@ export const WorkEntryEditForm = ({ entry, open, onClose }: WorkEntryEditFormPro
                   <SelectValue placeholder="Select work type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="painting">Painting</SelectItem>
-                  <SelectItem value="electrical">Electrical Work</SelectItem>
-                  <SelectItem value="plumbing">Plumbing</SelectItem>
-                  <SelectItem value="carpentry">Carpentry</SelectItem>
-                  <SelectItem value="masonry">Masonry</SelectItem>
-                  <SelectItem value="cleaning">Cleaning</SelectItem>
-                  <SelectItem value="maintenance">General Maintenance</SelectItem>
-                  <SelectItem value="renovation">Renovation</SelectItem>
-                </SelectContent>
+                 <SelectItem value="newwork">New work</SelectItem>
+                  <SelectItem value="alterwork">Alter work</SelectItem>
+                  <SelectItem value="complaintwork">Complaint work</SelectItem>
+                  <SelectItem value="rework">Re-work</SelectItem>
+                  <SelectItem value="fittingwork ">Fitting work </SelectItem>
+                  <SelectItem value="pastingwork">Pasting work</SelectItem>
+                                 </SelectContent>
               </Select>
             </div>
 

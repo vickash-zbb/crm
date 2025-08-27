@@ -12,14 +12,13 @@ import { useCreateWorkEntry, type CreateWorkEntryData } from "@/hooks/useWorkEnt
 
 // Default auto-rates (₹ per Sq Ft)
 const DEFAULT_RATES: Record<string, number> = {
-  painting: 12,
-  electrical: 20,
-  plumbing: 15,
-  carpentry: 18,
-  masonry: 25,
-  cleaning: 10,
-  maintenance: 14,
-  renovation: 30,
+    newwork: 12,
+  alterwork: 20,
+  complaintwork: 15,
+  rework: 18,
+  fittingwork: 25,
+  pastingwork: 10,
+ 
 };
 
 interface FormData {
@@ -34,6 +33,7 @@ interface FormData {
   quantity: string;
   rate_per_sqft: string;
   square_feet: string;
+  status: string;
   width: string;
 
   work_description: string;
@@ -56,6 +56,7 @@ export const WorkEntryForm = () => {
     quantity: "",
     rate_per_sqft: "",
     square_feet: "",
+    status: "pending",
     width: "",
     
     work_description: "",
@@ -109,22 +110,23 @@ export const WorkEntryForm = () => {
     }
 
     const workEntryData: CreateWorkEntryData = {
-      block: formData.block,
-      college_id: formData.college_id,
-      date: formData.date,
-      final_rate: parseFloat(formData.final_rate) || undefined,
-      floor: formData.floor,
-      height: parseFloat(formData.height) || undefined,
-      length: parseFloat(formData.length) || undefined,
-      location: formData.location,
-      quantity: parseInt(formData.quantity) || undefined,
-      rate_per_sqft: parseFloat(formData.rate_per_sqft) || undefined,
-      square_feet: parseFloat(formData.square_feet) || undefined,
-      width: parseFloat(formData.width) || undefined,
-      
-      work_description: formData.work_description,
-      work_type: formData.work_type,
-    };
+        block: formData.block,
+        college_id: formData.college_id,
+        date: formData.date,
+        final_rate: parseFloat(formData.final_rate) || undefined,
+        floor: formData.floor,
+        height: parseFloat(formData.height) || undefined,
+        length: parseFloat(formData.length) || undefined,
+        location: formData.location,
+        quantity: parseInt(formData.quantity) || undefined,
+        rate_per_sqft: parseFloat(formData.rate_per_sqft) || undefined,
+        square_feet: parseFloat(formData.square_feet) || undefined,
+         status: (formData.status as "pending" | "in-progress" | "completed") || "pending",
+        width: parseFloat(formData.width) || undefined,
+        
+        work_description: formData.work_description,
+        work_type: formData.work_type,
+      };
 
     try {
       await createWorkEntry.mutateAsync(workEntryData);
@@ -140,6 +142,7 @@ export const WorkEntryForm = () => {
         quantity: "",
         rate_per_sqft: "",
         square_feet: "",
+        status:"pending",
         width: "",
         
         work_description: "",
@@ -220,7 +223,23 @@ export const WorkEntryForm = () => {
               onChange={(e) => handleInputChange("date", e.target.value)}
             />
           </div>
-
+ {/* Status */}
+            <div className="space-y-2">
+              <Label htmlFor="edit-status">Status</Label>
+              <Select 
+                value={formData.status} 
+                onValueChange={(value: "pending" | "in-progress" | "completed") => handleInputChange("status", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="in-progress">In Progress</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           {/* Work Description */}
           <div className="md:col-span-2 lg:col-span-3 space-y-2">
             <Label htmlFor="work_description">Work Description *</Label>
@@ -241,14 +260,12 @@ export const WorkEntryForm = () => {
                 <SelectValue placeholder="Select work type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="painting">Painting</SelectItem>
-                <SelectItem value="electrical">Electrical Work</SelectItem>
-                <SelectItem value="plumbing">Plumbing</SelectItem>
-                <SelectItem value="carpentry">Carpentry</SelectItem>
-                <SelectItem value="masonry">Masonry</SelectItem>
-                <SelectItem value="cleaning">Cleaning</SelectItem>
-                <SelectItem value="maintenance">General Maintenance</SelectItem>
-                <SelectItem value="renovation">Renovation</SelectItem>
+                <SelectItem value="newwork">New work</SelectItem>
+                  <SelectItem value="alterwork">Alter work</SelectItem>
+                  <SelectItem value="complaintwork">Complaint work</SelectItem>
+                  <SelectItem value="rework">Re-work</SelectItem>
+                  <SelectItem value="fittingwork ">Fitting work </SelectItem>
+                  <SelectItem value="pastingwork">Pasting work</SelectItem>
               </SelectContent>
             </Select>
           </div>
