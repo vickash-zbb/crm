@@ -272,4 +272,33 @@ All colors MUST be HSL.
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
     transform: scale(1.02);
   }
+
+  /* Header button hover color changes */
+  .header-btn-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .header-btn-hover:hover {
+    color: #fbbf24 !important; /* Warm yellow/amber color */
+  }
+
+  .header-btn-hover:hover svg {
+    color: #fbbf24 !important; /* Icon color changes to match text */
+  }
+
+  .header-btn-accent-hover:hover {
+    color: #60a5fa !important; /* Bright blue accent */
+  }
+
+  .header-btn-accent-hover:hover svg {
+    color: #60a5fa !important;
+  }
+
+  .header-btn-success-hover:hover {
+    color: #34d399 !important; /* Success green */
+  }
+
+  .header-btn-success-hover:hover svg {
+    color: #34d399 !important;
+  }
 }

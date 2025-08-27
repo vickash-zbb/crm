@@ -76,7 +76,7 @@ export const Header = () => {
     <header className="bg-gradient-primary text-primary-foreground shadow-business-lg sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <Link to="/dashboard" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
+          <Link to="/dashboard" className="flex items-center space-x-3 hover:scale-105 transition-transform duration-200 focus-ring rounded-md p-1">
             <Building2 className="h-8 w-8" />
             <div className="hidden md:block">
               <h1 className="text-xl md:text-2xl font-bold">College Work Management</h1>
@@ -94,7 +94,7 @@ export const Header = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`text-primary-foreground hover:bg-white/10 navbar-btn-hover focus-ring ${
+                  className={`text-primary-foreground hover:bg-white/10 navbar-btn-hover header-btn-hover focus-ring ${
                     location.pathname === item.href ? 'bg-white/10' : ''
                   }`}
                 >
@@ -107,7 +107,7 @@ export const Header = () => {
             <Link to="/new-work-entry">
               <Button
                 size="sm"
-                className="bg-white/10 text-primary-foreground hover:bg-white/20 border-white/20 ml-2 btn-hover-lift focus-ring"
+                className="bg-white/10 text-primary-foreground hover:bg-white/20 border-white/20 ml-2 btn-hover-lift header-btn-success-hover focus-ring"
                 variant="outline"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -162,7 +162,7 @@ export const Header = () => {
             <Link to="/new-work-entry">
               <Button
                 size="sm"
-                className="bg-white/10 text-primary-foreground hover:bg-white/20 border-white/20 mr-2 btn-hover-lift focus-ring"
+                className="bg-white/10 text-primary-foreground hover:bg-white/20 border-white/20 mr-2 btn-hover-lift header-btn-success-hover focus-ring"
                 variant="outline"
               >
                 <Plus className="h-4 w-4" />
@@ -172,7 +172,7 @@ export const Header = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="text-primary-foreground hover:bg-white/10 btn-hover-scale focus-ring"
+              className="text-primary-foreground hover:bg-white/10 btn-hover-scale header-btn-accent-hover focus-ring"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -188,7 +188,7 @@ export const Header = () => {
                 <Link
                   key={item.href}
                   to={item.href}
-                  className={`flex items-center px-4 py-2 rounded-md navbar-btn-hover ${
+                  className={`flex items-center px-4 py-2 rounded-md navbar-btn-hover header-btn-hover ${
                     location.pathname === item.href
                       ? 'bg-white/10 text-white'
                       : 'text-primary-foreground hover:bg-white/10'
@@ -215,7 +215,7 @@ export const Header = () => {
                   </div>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start text-primary-foreground hover:bg-white/10 mt-2 btn-hover-lift focus-ring"
+                    className="w-full justify-start text-primary-foreground hover:bg-white/10 mt-2 btn-hover-lift header-btn-accent-hover focus-ring"
                     onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4 mr-3" />
