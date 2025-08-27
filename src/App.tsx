@@ -98,6 +98,14 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/colleges"
+              element={
+                <ProtectedRoute requiredRole="manager">
+                  <Index />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />

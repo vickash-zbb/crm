@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Header } from "@/components/dashboard/Header";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { RealTimeAnalytics } from "@/components/dashboard/RealTimeAnalytics";
@@ -11,18 +11,27 @@ import { Button } from "@/components/ui/button";
 import { Plus, FileText, Building2, Users, Clock, BarChart3, Download, ArrowRight, Database } from "lucide-react";
 
 const Index = () => {
-  const [dashboardFilters, setDashboardFilters] = useState<DashboardFilterState>({
-    college: "all",
-    status: "all",
-    workType: "all",
-    search: "",
-    minAmount: "",
-    maxAmount: "",
-  });
+   const location = useLocation();
+   const [activeTab, setActiveTab] = useState("overview");
+   const [dashboardFilters, setDashboardFilters] = useState<DashboardFilterState>({
+     college: "all",
+     status: "all",
+     workType: "all",
+     search: "",
+     minAmount: "",
+     maxAmount: "",
+   });
 
-  const handleFiltersChange = (filters: DashboardFilterState) => {
-    setDashboardFilters(filters);
-  };
+   // Check if we're coming from /colleges route and switch to college management tab
+   useEffect(() => {
+     if (location.pathname === '/colleges') {
+       setActiveTab('colleges');
+     }
+   }, [location.pathname]);
+
+   const handleFiltersChange = (filters: DashboardFilterState) => {
+     setDashboardFilters(filters);
+   };
 
   return (
     <div className="min-h-screen bg-background">
@@ -96,22 +105,24 @@ const Index = () => {
               </Card>
             </Link>
 
-            <Card className="p-6 bg-gradient-card border-0 shadow-card hover:shadow-business-md transition-smooth cursor-pointer group transform hover:-translate-y-1 transition-transform duration-200">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
-                  <Building2 className="h-6 w-6 text-blue-500" />
+            <Link to="/colleges">
+              <Card className="p-6 bg-gradient-card border-0 shadow-card hover:shadow-business-md transition-smooth cursor-pointer group transform hover:-translate-y-1 transition-transform duration-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
+                    <Building2 className="h-6 w-6 text-blue-500" />
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-blue-500 transition-colors" />
                 </div>
-                <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-blue-500 transition-colors" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">College Management</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Add and manage college information and locations
-              </p>
-              <Button variant="outline" className="w-full border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all duration-200 transform hover:scale-105">
-                <Building2 className="h-4 w-4 mr-2" />
-                Manage Colleges
-              </Button>
-            </Card>
+                <h3 className="text-lg font-semibold text-foreground mb-2">College Management</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Add and manage college information and locations
+                </p>
+                <Button variant="outline" className="w-full border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all duration-200 transform hover:scale-105">
+                  <Building2 className="h-4 w-4 mr-2" />
+                  Manage Colleges
+                </Button>
+              </Card>
+            </Link>
           </div>
 
           {/* Secondary Actions */}
@@ -194,7 +205,7 @@ const Index = () => {
         {/* College Management Section */}
         <div className="mt-8">
           <h3 className="text-2xl font-bold text-foreground mb-4">College Management</h3>
-          <Tabs defaultValue="overview" className="space-y-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="overview">System Overview</TabsTrigger>
               <TabsTrigger value="colleges">College Management</TabsTrigger>
