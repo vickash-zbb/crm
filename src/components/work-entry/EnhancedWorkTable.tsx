@@ -241,7 +241,7 @@ export const EnhancedWorkTable = () => {
   return (
     <Card className="p-6 bg-gradient-card border-0 shadow-card">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6  flex-wrap gap-4">
         <div>
           <h3 className="text-lg font-semibold text-foreground">Work Entries</h3>
           <p className="text-sm text-muted-foreground">

@@ -430,7 +430,7 @@ const Reports = () => {
       
       <main className="container mx-auto px-6 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8  flex-wrap gap-4">
           <div>
             <h2 className="text-3xl font-bold text-foreground mb-2">Reports & Analytics</h2>
             <p className="text-muted-foreground">Comprehensive insights and data analysis</p>

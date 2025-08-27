@@ -76,7 +76,7 @@ export const CollegeManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-wrap gap-4">
         <h2 className="text-2xl font-bold text-foreground">College Management</h2>
         <div className="flex gap-2">
           <Button onClick={handleExport} variant="outline" size="sm">

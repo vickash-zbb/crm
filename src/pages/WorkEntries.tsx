@@ -15,7 +15,7 @@ const WorkEntries = () => {
       
       <main className="container mx-auto px-6 py-8">
         {/* Breadcrumb & Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8  flex-wrap gap-4">
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Link to="/dashboard">
@@ -50,7 +50,7 @@ const WorkEntries = () => {
         {/* Quick Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="p-6 bg-gradient-card border-0 shadow-card">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between  flex-wrap gap-4">
               <div>
                 <p className="text-sm text-muted-foreground font-medium">Total Entries</p>
                 <p className="text-3xl font-bold text-foreground mt-1">{stats?.totalTasks || 0}</p>
@@ -106,7 +106,7 @@ const WorkEntries = () => {
 
         {/* Action Bar */}
         <Card className="p-4 mb-6 bg-gradient-card border-0 shadow-card">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between  flex-wrap gap-4">
             <div className="flex items-center space-x-4">
               <h3 className="text-lg font-semibold text-foreground">All Work Entries</h3>
               <div className="flex items-center space-x-2 text-sm text-muted-foreground">
