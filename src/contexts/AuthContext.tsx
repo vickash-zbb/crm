@@ -47,14 +47,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Session timeout duration: 1 hour (in milliseconds)
+  const SESSION_TIMEOUT = 1 * 60 * 60 * 1000; // 1 hour
+
+  const checkSessionExpiration = (loginTime: number): boolean => {
+    const now = Date.now();
+    return (now - loginTime) > SESSION_TIMEOUT;
+  };
+
   useEffect(() => {
     // Check for stored user session
     const storedUser = localStorage.getItem('auth_user');
-    if (storedUser) {
+    const storedLoginTime = localStorage.getItem('auth_login_time');
+
+    if (storedUser && storedLoginTime) {
       try {
-        setUser(JSON.parse(storedUser));
+        const loginTime = parseInt(storedLoginTime, 10);
+
+        // Check if session has expired
+        if (checkSessionExpiration(loginTime)) {
+          // Session expired, remove stored data
+          localStorage.removeItem('auth_user');
+          localStorage.removeItem('auth_login_time');
+          setUser(null);
+        } else {
+          // Session still valid
+          setUser(JSON.parse(storedUser));
+        }
       } catch (error) {
+        // Invalid data, clean up
         localStorage.removeItem('auth_user');
+        localStorage.removeItem('auth_login_time');
       }
     }
     setIsLoading(false);
@@ -78,9 +101,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         role: foundUser.role,
         avatar: foundUser.avatar,
       };
-      
+
+      const loginTime = Date.now();
       setUser(userWithoutPassword);
       localStorage.setItem('auth_user', JSON.stringify(userWithoutPassword));
+      localStorage.setItem('auth_login_time', loginTime.toString());
       setIsLoading(false);
       return true;
     }
@@ -92,6 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setUser(null);
     localStorage.removeItem('auth_user');
+    localStorage.removeItem('auth_login_time');
   };
 
   const value: AuthContextType = {
