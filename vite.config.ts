@@ -7,7 +7,8 @@ import { componentTagger } from "lovable-tagger";
 export default defineConfig(({ mode }) => ({
   base:
     mode === 'production'
-      ? '/nandha-college-crm/' // for GitHub Pages
+      ? '' // Use an empty string for relative asset paths.
+           // If deploying to a subfolder (e.g., GitHub Pages), set this to '/your-repo-name/'.
       : mode === 'hostinger'
       ? '/'
       : '/',

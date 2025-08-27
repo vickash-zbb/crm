@@ -12,13 +12,12 @@ import { useCreateWorkEntry, type CreateWorkEntryData } from "@/hooks/useWorkEnt
 
 // Default auto-rates (₹ per Sq Ft)
 const DEFAULT_RATES: Record<string, number> = {
-    newwork: 12,
+  newwork: 12,
   alterwork: 20,
   complaintwork: 15,
   rework: 18,
   fittingwork: 25,
   pastingwork: 10,
- 
 };
 
 interface FormData {
@@ -264,7 +263,7 @@ export const WorkEntryForm = () => {
                   <SelectItem value="alterwork">Alter work</SelectItem>
                   <SelectItem value="complaintwork">Complaint work</SelectItem>
                   <SelectItem value="rework">Re-work</SelectItem>
-                  <SelectItem value="fittingwork ">Fitting work </SelectItem>
+                  <SelectItem value="fittingwork">Fitting work</SelectItem>
                   <SelectItem value="pastingwork">Pasting work</SelectItem>
               </SelectContent>
             </Select>
