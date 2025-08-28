@@ -779,7 +779,7 @@ const Employees = () => {
             </Table>
 
             {/* Debug Information */}
-            <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            {/* <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <h3 className="font-semibold text-yellow-800 mb-2">🔍 Debug Information</h3>
               <div className="text-sm text-yellow-700 space-y-1">
                 <p><strong>Loading:</strong> {isLoading ? 'Yes' : 'No'}</p>
@@ -855,7 +855,7 @@ const Employees = () => {
                   📊 Log State
                 </Button>
               </div>
-            </div>
+            </div> */}
 
             {isLoading ? (
               <div className="text-center py-8">
