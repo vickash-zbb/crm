@@ -74,6 +74,7 @@ const Attendance = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<AttendanceRecord | null>(null);
   const [isSettingUpDatabase, setIsSettingUpDatabase] = useState(false);
+  const [deleteRecordId, setDeleteRecordId] = useState<string | null>(null);
 
   const [newAttendance, setNewAttendance] = useState<AttendanceFormData>({
     employeeId: "",
@@ -607,13 +608,7 @@ const Attendance = () => {
               )}
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.location.reload()}
-              >
-                🔄 Refresh
-              </Button>
+              
               {(dateRange || filterStatus !== "all" || filterCheckIn !== "all" || searchTerm) && (
                 <Button
                   variant="outline"
