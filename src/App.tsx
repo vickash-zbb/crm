@@ -76,11 +76,7 @@ const App = () => (
             />
             <Route
               path="/attendance"
-              element={
-                <ProtectedRoute requiredRole="manager">
-                  <Attendance />
-                </ProtectedRoute>
-              }
+              element={<Attendance />}
             />
             <Route
               path="/reports"

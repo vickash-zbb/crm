@@ -5,6 +5,7 @@ import { StatsCards } from "@/components/dashboard/StatsCards";
 import { RealTimeAnalytics } from "@/components/dashboard/RealTimeAnalytics";
 import { DashboardFilters, type DashboardFilterState } from "@/components/dashboard/DashboardFilters";
 import { CollegeManagement } from "@/components/colleges/CollegeManagement";
+import { DatabaseTest } from "@/components/DatabaseTest";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,11 @@ const Index = () => {
         {/* Real-time Analytics Section */}
         <div className="mb-8">
           <RealTimeAnalytics />
+        </div>
+
+        {/* Database Test Section */}
+        <div className="mb-8">
+          <DatabaseTest />
         </div>
 
         <div className="mb-8">

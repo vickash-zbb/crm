@@ -124,6 +124,124 @@ export type Database = {
           },
         ]
       }
+      employees: {
+        Row: {
+          id: string
+          name: string
+          email: string
+          phone: string | null
+          role: string
+          department: string
+          salary: number
+          join_date: string
+          status: string
+          address: string | null
+          skills: string | null
+          college_id: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          email: string
+          phone?: string | null
+          role: string
+          department: string
+          salary?: number
+          join_date: string
+          status?: string
+          address?: string | null
+          skills?: string | null
+          college_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          email?: string
+          phone?: string | null
+          role?: string
+          department?: string
+          salary?: number
+          join_date?: string
+          status?: string
+          address?: string | null
+          skills?: string | null
+          college_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employees_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: false
+            referencedRelation: "colleges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attendance: {
+        Row: {
+          id: string
+          employee_id: string
+          date: string
+          check_in: string | null
+          check_out: string | null
+          total_hours: number
+          status: string
+          work_description: string | null
+          daily_work_tasks: string | null
+          work_completed: string | null
+          overtime: number
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          employee_id: string
+          date: string
+          check_in?: string | null
+          check_out?: string | null
+          total_hours?: number
+          status?: string
+          work_description?: string | null
+          daily_work_tasks?: string | null
+          work_completed?: string | null
+          overtime?: number
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          employee_id?: string
+          date?: string
+          check_in?: string | null
+          check_out?: string | null
+          total_hours?: number
+          status?: string
+          work_description?: string | null
+          daily_work_tasks?: string | null
+          work_completed?: string | null
+          overtime?: number
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

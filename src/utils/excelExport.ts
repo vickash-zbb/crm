@@ -1,5 +1,6 @@
 import * as XLSX from 'xlsx';
 import { WorkEntry } from '@/hooks/useWorkEntries';
+import { AttendanceRecord } from '@/hooks/useAttendance';
 
 export const exportToExcel = (workEntries: WorkEntry[], filename: string = 'work-entries.xlsx') => {
   // Prepare data for Excel export
@@ -35,6 +36,43 @@ export const exportToExcel = (workEntries: WorkEntry[], filename: string = 'work
 
   // Add worksheet to workbook
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Work Entries');
+
+  // Generate and download the file
+  XLSX.writeFile(workbook, filename);
+};
+
+export const exportAttendanceToExcel = (attendanceRecords: AttendanceRecord[], filename: string = 'attendance-records.xlsx') => {
+  // Prepare data for Excel export
+  const excelData = attendanceRecords.map((record) => ({
+    'Date': new Date(record.date).toLocaleDateString(),
+    'Employee Name': record.employees?.name || 'N/A',
+    'Employee Email': record.employees?.email || 'N/A',
+    'Employee Role': record.employees?.role || 'N/A',
+    'Employee Department': record.employees?.department || 'N/A',
+    'Check In Time': record.check_in || 'N/A',
+    'Check Out Time': record.check_out || 'N/A',
+    'Total Hours': record.total_hours || 0,
+    'Status': record.status,
+    'Work Description': record.work_description || 'N/A',
+    'Overtime Hours': record.overtime || 0,
+    'Created At': new Date(record.created_at).toLocaleString(),
+    'Updated At': new Date(record.updated_at).toLocaleString(),
+  }));
+
+  // Create a new workbook
+  const workbook = XLSX.utils.book_new();
+
+  // Convert data to worksheet
+  const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+  // Auto-size columns
+  const colWidths = Object.keys(excelData[0] || {}).map(key => ({
+    wch: Math.max(key.length, 15)
+  }));
+  worksheet['!cols'] = colWidths;
+
+  // Add worksheet to workbook
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Attendance Records');
 
   // Generate and download the file
   XLSX.writeFile(workbook, filename);

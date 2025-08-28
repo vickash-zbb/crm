@@ -33,23 +33,27 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { 
-  Users, 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
-  Phone, 
+import {
+  Users,
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  Phone,
   Mail,
   MapPin,
   Calendar,
   User,
-  Filter
+  Filter,
+  Loader2
 } from "lucide-react";
 import { Header } from "@/components/dashboard/Header";
+import { useEmployees, useCreateEmployee, useUpdateEmployee, useDeleteEmployee, type Employee } from "@/hooks/useEmployees";
+import { useColleges } from "@/hooks/useColleges";
+import { supabase } from "@/integrations/supabase/client";
+import { setupDatabase } from "@/utils/databaseSetup";
 
-interface Employee {
-  id: string;
+interface EmployeeFormData {
   name: string;
   email: string;
   phone: string;
@@ -63,73 +67,22 @@ interface Employee {
   collegeId?: string;
 }
 
-// Mock employee data
-const MOCK_EMPLOYEES: Employee[] = [
-  {
-    id: '1',
-    name: 'Rajesh Kumar',
-    email: 'rajesh.kumar@college.com',
-    phone: '+91 9876543210',
-    role: 'manager',
-    department: 'Maintenance',
-    salary: 45000,
-    joinDate: '2023-01-15',
-    status: 'active',
-    address: 'Mumbai, Maharashtra',
-    skills: ['Project Management', 'Electrical', 'Team Leadership'],
-    collegeId: '1'
-  },
-  {
-    id: '2',
-    name: 'Priya Sharma', 
-    email: 'priya.sharma@college.com',
-    phone: '+91 9876543211',
-    role: 'supervisor',
-    department: 'Cleaning',
-    salary: 28000,
-    joinDate: '2023-03-20',
-    status: 'active',
-    address: 'Delhi, India',
-    skills: ['Quality Control', 'Team Management', 'Cleaning'],
-    collegeId: '1'
-  },
-  {
-    id: '3',
-    name: 'Amit Patel',
-    email: 'amit.patel@college.com', 
-    phone: '+91 9876543212',
-    role: 'worker',
-    department: 'Carpentry',
-    salary: 22000,
-    joinDate: '2023-06-10',
-    status: 'active',
-    address: 'Pune, Maharashtra',
-    skills: ['Carpentry', 'Furniture Making', 'Wood Work'],
-    collegeId: '2'
-  },
-  {
-    id: '4',
-    name: 'Sunita Devi',
-    email: 'sunita.devi@college.com',
-    phone: '+91 9876543213', 
-    role: 'worker',
-    department: 'Cleaning',
-    salary: 18000,
-    joinDate: '2023-08-05',
-    status: 'on-leave',
-    address: 'Chennai, Tamil Nadu',
-    skills: ['Cleaning', 'Housekeeping'],
-    collegeId: '1'
-  }
-];
+// Mock employee data (will be replaced with real data from database)
+const MOCK_EMPLOYEES: Employee[] = [];
 
 const Employees = () => {
-  const [employees, setEmployees] = useState<Employee[]>(MOCK_EMPLOYEES);
+  const { data: employees = [], isLoading, error } = useEmployees();
+  const createEmployee = useCreateEmployee();
+  const updateEmployee = useUpdateEmployee();
+  const deleteEmployee = useDeleteEmployee();
+  const { data: colleges = [] } = useColleges();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [isSettingUpDatabase, setIsSettingUpDatabase] = useState(false);
   
   const [newEmployee, setNewEmployee] = useState<Partial<Employee>>({
     name: "",
@@ -138,10 +91,10 @@ const Employees = () => {
     role: "worker",
     department: "",
     salary: 0,
-    joinDate: new Date().toISOString().split('T')[0],
+    join_date: new Date().toISOString().split('T')[0],
     status: "active",
     address: "",
-    skills: [],
+    skills: "",
   });
 
   // Filter employees
@@ -158,22 +111,21 @@ const Employees = () => {
 
   const handleAddEmployee = () => {
     if (!newEmployee.name || !newEmployee.email) return;
-    
-    const employee: Employee = {
-      id: Date.now().toString(),
+
+    createEmployee.mutate({
       name: newEmployee.name || "",
       email: newEmployee.email || "",
       phone: newEmployee.phone || "",
       role: (newEmployee.role as Employee['role']) || "worker",
       department: newEmployee.department || "",
       salary: newEmployee.salary || 0,
-      joinDate: newEmployee.joinDate || new Date().toISOString().split('T')[0],
+      join_date: newEmployee.join_date || new Date().toISOString().split('T')[0],
       status: (newEmployee.status as Employee['status']) || "active",
       address: newEmployee.address || "",
-      skills: newEmployee.skills || [],
-    };
-    
-    setEmployees([...employees, employee]);
+      skills: newEmployee.skills || "",
+      college_id: newEmployee.college_id || undefined,
+    });
+
     setNewEmployee({
       name: "",
       email: "",
@@ -181,10 +133,10 @@ const Employees = () => {
       role: "worker",
       department: "",
       salary: 0,
-      joinDate: new Date().toISOString().split('T')[0],
+      join_date: new Date().toISOString().split('T')[0],
       status: "active",
       address: "",
-      skills: [],
+      skills: "",
     });
     setIsAddDialogOpen(false);
   };
@@ -196,12 +148,24 @@ const Employees = () => {
 
   const handleUpdateEmployee = () => {
     if (!editingEmployee || !newEmployee.name || !newEmployee.email) return;
-    
-    const updatedEmployees = employees.map(emp => 
-      emp.id === editingEmployee.id ? { ...emp, ...newEmployee } as Employee : emp
-    );
-    
-    setEmployees(updatedEmployees);
+
+    updateEmployee.mutate({
+      id: editingEmployee.id,
+      data: {
+        name: newEmployee.name || "",
+        email: newEmployee.email || "",
+        phone: newEmployee.phone || "",
+        role: (newEmployee.role as Employee['role']) || "worker",
+        department: newEmployee.department || "",
+        salary: newEmployee.salary || 0,
+        join_date: newEmployee.join_date || new Date().toISOString().split('T')[0],
+        status: (newEmployee.status as Employee['status']) || "active",
+        address: newEmployee.address || "",
+        skills: newEmployee.skills || "",
+        college_id: newEmployee.college_id || undefined,
+      }
+    });
+
     setEditingEmployee(null);
     setNewEmployee({
       name: "",
@@ -210,15 +174,81 @@ const Employees = () => {
       role: "worker",
       department: "",
       salary: 0,
-      joinDate: new Date().toISOString().split('T')[0],
+      join_date: new Date().toISOString().split('T')[0],
       status: "active",
       address: "",
-      skills: [],
+      skills: "",
     });
   };
 
   const handleDeleteEmployee = (id: string) => {
-    setEmployees(employees.filter(emp => emp.id !== id));
+    deleteEmployee.mutate(id);
+  };
+
+  // Comprehensive connection and data test
+  const runFullDiagnostic = async () => {
+    console.log("🔍 Starting full diagnostic...");
+
+    try {
+      // Test 1: Basic Supabase connection
+      console.log("1️⃣ Testing Supabase connection...");
+      const { data: connectionTest, error: connectionError } = await supabase
+        .from("employees")
+        .select("count", { count: "exact", head: true });
+
+      if (connectionError) {
+        console.error("❌ Connection test failed:", connectionError);
+        return;
+      }
+      console.log("✅ Connection test passed, count:", connectionTest);
+
+      // Test 2: Fetch actual data
+      console.log("2️⃣ Testing data fetch...");
+      const { data: fetchTest, error: fetchError } = await supabase
+        .from("employees")
+        .select("*")
+        .limit(5);
+
+      if (fetchError) {
+        console.error("❌ Data fetch test failed:", fetchError);
+        return;
+      }
+      console.log("✅ Data fetch test passed, data:", fetchTest);
+
+      // Test 3: Check table structure
+      console.log("3️⃣ Testing table structure...");
+      const { data: structureTest, error: structureError } = await supabase
+        .from("employees")
+        .select("*")
+        .limit(1);
+
+      if (structureError) {
+        console.error("❌ Structure test failed:", structureError);
+        return;
+      }
+      console.log("✅ Structure test passed, first record:", structureTest?.[0]);
+
+      console.log("🎉 All diagnostic tests passed!");
+
+    } catch (error) {
+      console.error("💥 Diagnostic failed with error:", error);
+    }
+  };
+
+  // Database setup function
+  const handleDatabaseSetup = async () => {
+    setIsSettingUpDatabase(true);
+    try {
+      const success = await setupDatabase();
+      if (success) {
+        // Refresh the page to reload data
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Database setup failed:", error);
+    } finally {
+      setIsSettingUpDatabase(false);
+    }
   };
 
   const getStatusColor = (status: Employee['status']) => {
@@ -261,13 +291,28 @@ const Employees = () => {
             <p className="text-muted-foreground">Manage your workforce across all colleges</p>
           </div>
           
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-gradient-primary hover:bg-primary-hover">
+          <div className="flex gap-2">
+            <Button
+              onClick={handleDatabaseSetup}
+              disabled={isSettingUpDatabase}
+              variant="outline"
+              className="border-orange-200 text-orange-700 hover:bg-orange-50"
+            >
+              {isSettingUpDatabase ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
                 <Plus className="h-4 w-4 mr-2" />
-                Add Employee
-              </Button>
-            </DialogTrigger>
+              )}
+              {isSettingUpDatabase ? "Setting up..." : "Setup Database"}
+            </Button>
+
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-primary hover:bg-primary-hover">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Employee
+                </Button>
+              </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Add New Employee</DialogTitle>
@@ -346,8 +391,8 @@ const Employees = () => {
                   <Label>Join Date</Label>
                   <Input
                     type="date"
-                    value={newEmployee.joinDate}
-                    onChange={(e) => setNewEmployee(prev => ({ ...prev, joinDate: e.target.value }))}
+                    value={newEmployee.join_date}
+                    onChange={(e) => setNewEmployee(prev => ({ ...prev, join_date: e.target.value }))}
                   />
                 </div>
                 
@@ -388,6 +433,7 @@ const Employees = () => {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {/* Statistics Cards */}
@@ -396,42 +442,50 @@ const Employees = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground font-medium">Total Employees</p>
-                <p className="text-3xl font-bold text-foreground mt-1">{employees.length}</p>
+                <p className="text-3xl font-bold text-foreground mt-1">
+                  {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : employees.length}
+                </p>
               </div>
               <Users className="h-8 w-8 text-primary" />
             </div>
           </Card>
-          
+
           <Card className="p-6 bg-gradient-card border-0 shadow-card">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground font-medium">Active</p>
                 <p className="text-3xl font-bold text-foreground mt-1">
-                  {employees.filter(e => e.status === 'active').length}
+                  {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> :
+                    employees.filter(e => e.status === 'active').length}
                 </p>
               </div>
               <User className="h-8 w-8 text-success" />
             </div>
           </Card>
-          
+
           <Card className="p-6 bg-gradient-card border-0 shadow-card">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground font-medium">On Leave</p>
                 <p className="text-3xl font-bold text-foreground mt-1">
-                  {employees.filter(e => e.status === 'on-leave').length}
+                  {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> :
+                    employees.filter(e => e.status === 'on-leave').length}
                 </p>
               </div>
               <Calendar className="h-8 w-8 text-warning" />
             </div>
           </Card>
-          
+
           <Card className="p-6 bg-gradient-card border-0 shadow-card">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground font-medium">Avg Salary</p>
                 <p className="text-3xl font-bold text-foreground mt-1">
-                  ₹{Math.round(employees.reduce((sum, e) => sum + e.salary, 0) / employees.length).toLocaleString()}
+                  {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> :
+                    employees.length > 0 ?
+                      `₹${Math.round(employees.reduce((sum, e) => sum + e.salary, 0) / employees.length).toLocaleString()}` :
+                      '₹0'
+                  }
                 </p>
               </div>
               <MapPin className="h-8 w-8 text-primary" />
@@ -497,6 +551,7 @@ const Employees = () => {
                   <TableHead>Employee</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Department</TableHead>
+                  <TableHead>College</TableHead>
                   <TableHead>Salary</TableHead>
                   <TableHead>Join Date</TableHead>
                   <TableHead>Status</TableHead>
@@ -527,8 +582,9 @@ const Employees = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>{employee.department}</TableCell>
+                    <TableCell>{employee.colleges?.name || 'Not Assigned'}</TableCell>
                     <TableCell>₹{employee.salary.toLocaleString()}</TableCell>
-                    <TableCell>{new Date(employee.joinDate).toLocaleDateString()}</TableCell>
+                    <TableCell>{new Date(employee.join_date).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(employee.status)}>
                         {employee.status.replace('-', ' ')}
@@ -637,6 +693,44 @@ const Employees = () => {
                               </div>
 
                               <div className="space-y-2">
+                                <Label>College</Label>
+                                <Select
+                                  value={newEmployee.college_id || ""}
+                                  onValueChange={(value) => setNewEmployee(prev => ({ ...prev, college_id: value }))}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select college" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {colleges.map((college) => (
+                                      <SelectItem key={college.id} value={college.id}>
+                                        {college.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+             
+                              <div className="space-y-2">
+                                <Label>College</Label>
+                                <Select
+                                  value={newEmployee.college_id || ""}
+                                  onValueChange={(value) => setNewEmployee(prev => ({ ...prev, college_id: value }))}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select college" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {colleges.map((college) => (
+                                      <SelectItem key={college.id} value={college.id}>
+                                        {college.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+
+                              <div className="space-y-2">
                                 <Label>Address</Label>
                                 <Input
                                   value={newEmployee.address}
@@ -684,12 +778,109 @@ const Employees = () => {
               </TableBody>
             </Table>
 
-            {filteredEmployees.length === 0 && (
+            {/* Debug Information */}
+            <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <h3 className="font-semibold text-yellow-800 mb-2">🔍 Debug Information</h3>
+              <div className="text-sm text-yellow-700 space-y-1">
+                <p><strong>Loading:</strong> {isLoading ? 'Yes' : 'No'}</p>
+                <p><strong>Error:</strong> {error ? error.message : 'None'}</p>
+                <p><strong>Data Count:</strong> {employees.length}</p>
+                <p><strong>Filtered Count:</strong> {filteredEmployees.length}</p>
+                <p><strong>Server Port:</strong> Check browser URL - should be 8081</p>
+                <p><strong>Database Tables:</strong> Check Supabase dashboard</p>
+                <p><strong>Sample Data:</strong> {employees.length > 0 ? employees.slice(0, 2).map(e => e.name).join(', ') : 'No data'}</p>
+              </div>
+              {employees.length > 0 && (
+                <div className="mt-2 p-2 bg-yellow-100 rounded text-xs">
+                  <strong>First Employee:</strong>
+                  <pre>{JSON.stringify(employees[0], null, 2)}</pre>
+                </div>
+              )}
+              <div className="mt-2 flex gap-2 flex-wrap">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => window.location.reload()}
+                >
+                  🔄 Refresh Page
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    console.log("🧪 Manual test - checking Supabase connection...");
+                    // Test direct Supabase call
+                    import("@/integrations/supabase/client").then(({ supabase }) => {
+                      supabase.from("employees").select("*").limit(1).then(({ data, error }) => {
+                        console.log("🧪 Direct Supabase test result:", { data, error });
+                      });
+                    });
+                  }}
+                >
+                  🧪 Test Connection
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={runFullDiagnostic}
+                >
+                  🔧 Full Diagnostic
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => {
+                    console.log("🔄 Force refresh employee data...");
+                    // Force invalidate and refetch
+                    import("@tanstack/react-query").then(({ useQueryClient }) => {
+                      // This will trigger a refetch
+                      window.location.reload();
+                    });
+                  }}
+                >
+                  🔄 Force Refresh
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => {
+                    console.log("� Current state:", {
+                      employees,
+                      isLoading,
+                      error: error?.message,
+                      count: employees.length
+                    });
+                  }}
+                >
+                  📊 Log State
+                </Button>
+              </div>
+            </div>
+
+            {isLoading ? (
+              <div className="text-center py-8">
+                <Loader2 className="h-12 w-12 text-muted-foreground mx-auto mb-4 animate-spin" />
+                <p className="text-muted-foreground">Loading employees...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-8">
+                <p className="text-destructive">Error loading employees: {error.message}</p>
+                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded">
+                  <p className="text-red-800 text-sm">
+                    <strong>Possible Solutions:</strong><br/>
+                    1. Check if database tables exist in Supabase<br/>
+                    2. Verify you're using the correct URL (localhost:8081)<br/>
+                    3. Ensure Supabase environment variables are set<br/>
+                    4. Check browser console for detailed errors
+                  </p>
+                </div>
+              </div>
+            ) : filteredEmployees.length === 0 ? (
               <div className="text-center py-8">
                 <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <p className="text-muted-foreground">No employees found matching your criteria.</p>
               </div>
-            )}
+            ) : null}
           </div>
         </Card>
       </main>

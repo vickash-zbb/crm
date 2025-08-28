@@ -9,10 +9,16 @@ import { WorkEntryForm } from "@/components/work-entry/WorkEntryForm";
 const NewWorkEntry = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const handleFormSuccess = () => {
+    setIsSubmitted(true);
+    // Auto-hide success message after 5 seconds
+    setTimeout(() => setIsSubmitted(false), 5000);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="container mx-auto px-6 py-8">
         {/* Breadcrumb & Header */}
         <div className="flex items-center justify-between mb-8  flex-wrap gap-4">
@@ -30,7 +36,7 @@ const NewWorkEntry = () => {
             <h2 className="text-3xl font-bold text-foreground mb-2">Create New Work Entry</h2>
             <p className="text-muted-foreground">Add a new work task with details, measurements, and cost calculations</p>
           </div>
-          
+
           <Link to="/work-entries">
             <Button variant="outline">
               View All Entries
@@ -45,7 +51,7 @@ const NewWorkEntry = () => {
               <CheckCircle className="h-6 w-6 text-success" />
               <div>
                 <h3 className="font-semibold text-success">Work Entry Created Successfully!</h3>
-                <p className="text-sm text-success/80">Your work entry has been saved and is now available in the system.</p>
+                <p className="text-sm text-success/80">Your work entry has been saved and is now available in the system. You can continue adding more entries.</p>
               </div>
             </div>
           </Card>
@@ -63,7 +69,7 @@ const NewWorkEntry = () => {
               <Plus className="h-8 w-8 text-primary" />
             </div>
           </Card>
-          
+
           <Card className="p-6 bg-gradient-card border-0 shadow-card">
             <div className="flex items-center justify-between">
               <div>
@@ -74,7 +80,7 @@ const NewWorkEntry = () => {
               <CheckCircle className="h-8 w-8 text-success" />
             </div>
           </Card>
-          
+
           <Card className="p-6 bg-gradient-card border-0 shadow-card">
             <div className="flex items-center justify-between">
               <div>
@@ -88,7 +94,7 @@ const NewWorkEntry = () => {
         </div>
 
         {/* Work Entry Form */}
-        <WorkEntryForm />
+        <WorkEntryForm onSuccess={handleFormSuccess} />
 
         {/* Quick Actions */}
         <Card className="p-6 mt-8 bg-gradient-card border-0 shadow-card">

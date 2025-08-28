@@ -39,7 +39,11 @@ interface FormData {
   work_type: string;
 }
 
-export const WorkEntryForm = () => {
+interface WorkEntryFormProps {
+  onSuccess?: () => void;
+}
+
+export const WorkEntryForm = ({ onSuccess }: WorkEntryFormProps = {}) => {
   const { data: colleges = [], isLoading: collegesLoading } = useColleges();
   const createWorkEntry = useCreateWorkEntry();
 
@@ -79,7 +83,14 @@ export const WorkEntryForm = () => {
   };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
-    let updatedData = { ...formData, [field]: value };
+    let processedValue = value;
+
+    // Auto-capitalize first letter for text fields
+    if (["block", "floor", "location", "work_description"].includes(field) && value.length > 0) {
+      processedValue = value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    let updatedData = { ...formData, [field]: processedValue };
 
     // If work_type is selected → auto-fill default rate
     if (field === "work_type") {
@@ -143,10 +154,17 @@ export const WorkEntryForm = () => {
         square_feet: "",
         status:"pending",
         width: "",
-        
+
         work_description: "",
         work_type: "",
       });
+      // Notify parent component of successful submission
+      onSuccess?.();
+
+      // Auto-refresh the page after successful save
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500); // 1.5 second delay to show success message
     } catch (error) {
       // Error handled by mutation
     }
