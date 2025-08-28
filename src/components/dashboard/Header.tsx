@@ -87,6 +87,7 @@ export const Header = () => {
             </div>
           </Link>
 
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-2">
             {filteredNavItems.map((item) => (
@@ -230,3 +231,5 @@ export const Header = () => {
     </header>
   );
 };
+
+export default Header;
